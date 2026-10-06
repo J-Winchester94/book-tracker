@@ -75,7 +75,7 @@ function renderShelf() {
         }
 
         const title = document.createElement("h3");
-        title.texContent = book.title;
+        title.textContent = book.title;
         item.appendChild(title);
 
         const author = document.createElement("p");
