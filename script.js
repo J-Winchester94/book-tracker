@@ -1,6 +1,11 @@
 const searchForm = document.getElementById("searchForm");
 const searchInput = document.getElementById("searchInput");
 const searchResults = document.getElementById("searchResults");
+const shelf = JSON.parse(localStorage.getItem("shelf")) || [];
+
+function saveShelf(){
+    localStorage.setItem("shelf", JSON.stringify(shelf));
+}
 
 // Create a search form that connects to the API
 searchForm.addEventListener("submit", async function (event){
@@ -40,7 +45,25 @@ function renderResults(books){
     year.textContent = book.first_publish_year ? "First published: " + book.first_publish_year : "Unknown year";
     item.appendChild(year);
 
+    const addButton = document.createElement("button");
+    addButton.textContent = "Add to shelf";
+    addButton.addEventListener("click", function(){
+        const shelfBook = {
+            key: book.key,
+            title: book.title,
+            author: book.author_name ? book.author_name.join(", ") : "Unknown Author",
+            coverId: book.cover_i,
+            pages: book.number_of_pages_median,
+            status: "Want to Read"
+        };
+        shelf.push(shelfBook);
+        saveShelf();
+        console.log(shelf);
+    });
+    item.appendChild(addButton);
+
     searchResults.appendChild(item);
 
     });
+
 }
