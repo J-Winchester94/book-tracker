@@ -146,6 +146,7 @@ function renderShelf() {
                 renderShelf();
             });
             item.appendChild(formatSelect);
+
             // Physical book logic
             if (book.format !== "Audio") {
                 if (!book.pages) {
@@ -165,8 +166,9 @@ function renderShelf() {
 
                     item.appendChild(totalLabel);
                     item.appendChild(totalInput);
+
+                // Page tracker
                 } else {
-                    // Page tracker
                     const pageInput = document.createElement("input");
                     pageInput.type = "number";
                     pageInput.min = 0;
@@ -191,7 +193,7 @@ function renderShelf() {
                     item.appendChild(pageProgress);
                 }
 
-                // Audiobook logic
+            // Audiobook logic
             } else if (book.format === "Audio") {
                 const length = book.audioLength || 0;
 
