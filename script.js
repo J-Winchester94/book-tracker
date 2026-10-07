@@ -8,10 +8,10 @@ function saveShelf() {
     localStorage.setItem("shelf", JSON.stringify(shelf));
 }
 
-function formatTime(minutes){
+function formatTime(minutes) {
     const hours = Math.floor(minutes / 60);
     const mins = (minutes % 60);
-    return hours + "h " + mins + "m"; 
+    return hours + "h " + mins + "m";
 }
 
 // Displays search results using the OpenLibrary API 
@@ -117,7 +117,7 @@ function renderShelf() {
         if (book.status === "Reading") {
             const formatSelect = document.createElement("select");
             const formats = ["Pages", "Audio"];
-            
+
             //Define Pages and Audio formates
             formats.forEach(function (formatName) {
                 const formatOption = document.createElement("option");
@@ -132,35 +132,52 @@ function renderShelf() {
                 renderShelf();
             });
             item.appendChild(formatSelect);
-
-
             // Physical book logic
-            if (book.format !== "Audio" && book.pages) {
-                const pageInput = document.createElement("input");
-                pageInput.type = "number";
-                pageInput.min = 0;
-                pageInput.max = book.pages;
-                pageInput.value = book.currentPage || 0;
+            if (book.format !== "Audio") {
+                if (!book.pages) {
+                    // No page count from the API, so ask for one
+                    const totalLabel = document.createElement("span");
+                    totalLabel.textContent = "Total pages: ";
 
-                pageInput.addEventListener("change", function () {
-                    shelf[index].currentPage = Number(pageInput.value);
-                    saveShelf();
-                    renderShelf();
-                });
+                    const totalInput = document.createElement("input");
+                    totalInput.type = "number";
+                    totalInput.min = 1;
 
-                // Create and display progess bar for physical books
-                const percentage = document.createElement("p");
-                const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
-                percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
-                item.appendChild(pageInput);
-                item.appendChild(percentage);
+                    totalInput.addEventListener("change", function () {
+                        shelf[index].pages = Number(totalInput.value);
+                        saveShelf();
+                        renderShelf();
+                    });
 
-                const pageProgress = document.createElement("progress");
-                pageProgress.max = book.pages;
-                pageProgress.value = book.currentPage || 0;
-                item.appendChild(pageProgress);
+                    item.appendChild(totalLabel);
+                    item.appendChild(totalInput);
+                } else {
+                    // Page tracker
+                    const pageInput = document.createElement("input");
+                    pageInput.type = "number";
+                    pageInput.min = 0;
+                    pageInput.max = book.pages;
+                    pageInput.value = book.currentPage || 0;
 
-            // Audiobook logic
+                    pageInput.addEventListener("change", function () {
+                        shelf[index].currentPage = Number(pageInput.value);
+                        saveShelf();
+                        renderShelf();
+                    });
+                    item.appendChild(pageInput);
+
+                    const percentage = document.createElement("p");
+                    const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
+                    percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
+                    item.appendChild(percentage);
+
+                    const pageProgress = document.createElement("progress");
+                    pageProgress.max = book.pages;
+                    pageProgress.value = book.currentPage || 0;
+                    item.appendChild(pageProgress);
+                }
+
+                // Audiobook logic
             } else if (book.format === "Audio") {
                 const length = book.audioLength || 0;
 
@@ -169,7 +186,7 @@ function renderShelf() {
                 lengthHours.min = 0;
                 lengthHours.placeholder = "hours";
                 lengthHours.value = Math.floor(length / 60);
-                
+
                 const lengthMinutes = document.createElement("input");
                 lengthMinutes.type = "number";
                 lengthMinutes.min = 0;
@@ -198,7 +215,7 @@ function renderShelf() {
                 positionHours.min = 0;
                 positionHours.placeholder = "hours";
                 positionHours.value = Math.floor(position / 60);
-                
+
                 const positionMinutes = document.createElement("input");
                 positionMinutes.type = "number";
                 positionMinutes.min = 0;
@@ -220,12 +237,12 @@ function renderShelf() {
                 item.appendChild(positionLabel);
                 item.appendChild(positionHours);
                 item.appendChild(positionMinutes);
-                
+
                 if (book.audioLength) {
                     const audioProgress = document.createElement("progress");
                     audioProgress.max = book.audioLength;
                     audioProgress.value = position;
-                    
+
                     const audioPercent = Math.round(position / book.audioLength * 100);
                     const audioPercentage = document.createElement("p");
                     audioPercentage.textContent = audioPercent + "% " + formatTime(position) + " of " + formatTime(book.audioLength);
