@@ -62,6 +62,21 @@ input[type="number"] { width: 70px; }
     margin-right: 15px;
 }
 
+.card input,
+.card select {
+    padding: 6px 8px;
+    border: 1px solid var(--border-color);
+    border-radius : 6px;
+    background-color: var(--bg-color);
+    font-family: inherit;
+    margin: 4px 6px 4px 0;
+}
+
+.card span {
+    display: inline-block;
+    width: 90px;
+}
+
 /* Buttons */
 .delete-button {
     background-color: transparent;
