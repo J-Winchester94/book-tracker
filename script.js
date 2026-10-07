@@ -107,11 +107,12 @@ function renderShelf() {
         item.appendChild(statusSelect);
 
 
-        // Display progess
+        // Display books in progess
         if (book.status === "Reading") {
             const formatSelect = document.createElement("select");
             const formats = ["Pages", "Audio"];
-
+            
+            //Define Pages and Audio formates
             formats.forEach(function (formatName) {
                 const formatOption = document.createElement("option");
                 formatOption.textContent = formatName;
@@ -126,6 +127,8 @@ function renderShelf() {
             });
             item.appendChild(formatSelect);
 
+
+            // Physical book logic
             if (book.format !== "Audio" && book.pages) {
                 const pageInput = document.createElement("input");
                 pageInput.type = "number";
@@ -146,14 +149,78 @@ function renderShelf() {
                 item.appendChild(pageInput);
                 item.appendChild(percentage);
 
-                const progress = document.createElement("progress");
-                progress.max = book.pages;
-                progress.value = book.currentPage || 0;
-                item.appendChild(progress);
+                const pageProgress = document.createElement("progress");
+                pageProgress.max = book.pages;
+                pageProgress.value = book.currentPage || 0;
+                item.appendChild(pageProgress);
 
-            // Audiobook information and progress
+            // Audiobook logic
             } else if (book.format === "Audio") {
+                const length = book.audioLength || 0;
+
+                const lengthHours = document.createElement("input");
+                lengthHours.type = "number";
+                lengthHours.min = 0;
+                lengthHours.placeholder = "hours";
+                lengthHours.value = Math.floor(length / 60);
                 
+                const lengthMinutes = document.createElement("input");
+                lengthMinutes.type = "number";
+                lengthMinutes.min = 0;
+                lengthMinutes.max = 59;
+                lengthMinutes.placeholder = "minutes";
+                lengthMinutes.value = length % 60;
+
+                function saveLength() {
+                    const totalLength = Number(lengthHours.value) * 60 + Number(lengthMinutes.value);
+                    shelf[index].audioLength = totalLength;
+                    saveShelf();
+                    renderShelf();
+                }
+                lengthHours.addEventListener("change", saveLength);
+                lengthMinutes.addEventListener("change", saveLength);
+
+                const lengthLabel = document.createElement("span");
+                lengthLabel.textContent = "Length: "
+                item.appendChild(lengthLabel);
+                item.appendChild(lengthHours);
+                item.appendChild(lengthMinutes);
+
+                const position = book.audioPosition || 0;
+                const positionHours = document.createElement("input");
+                positionHours.type = "number";
+                positionHours.min = 0;
+                positionHours.placeholder = "hours";
+                positionHours.value = Math.floor(position / 60);
+                
+                const positionMinutes = document.createElement("input");
+                positionMinutes.type = "number";
+                positionMinutes.min = 0;
+                positionMinutes.max = 59;
+                positionMinutes.placeholder = "minutes";
+                positionMinutes.value = position % 60;
+
+                function savePosition() {
+                    const totalPosition = Number(positionHours.value) * 60 + Number(positionMinutes.value);
+                    shelf[index].audioPosition = totalPosition;
+                    saveShelf();
+                    renderShelf();
+                }
+                positionHours.addEventListener("change", savePosition);
+                positionMinutes.addEventListener("change", savePosition);
+
+                const positionLabel = document.createElement("span");
+                positionLabel.textContent = "Position: ";
+                item.appendChild(positionLabel);
+                item.appendChild(positionHours);
+                item.appendChild(positionMinutes);
+                
+                if (book.audioLength) {
+                    const audioProgress = document.createElement("progress");
+                    audioProgress.max = book.audioLength;
+                    audioProgress.value = position;
+                    item.appendChild(audioProgress);
+                }
             }
         }
 
