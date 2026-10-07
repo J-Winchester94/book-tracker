@@ -8,6 +8,12 @@ function saveShelf() {
     localStorage.setItem("shelf", JSON.stringify(shelf));
 }
 
+function formatTime(minutes){
+    const hours = Math.floor(minutes / 60);
+    const mins = (minutes % 60);
+    return hours + "h " + mins + "m"; 
+}
+
 // Displays search results using the OpenLibrary API 
 function renderResults(books) {
     searchResults.innerHTML = "";
@@ -142,7 +148,7 @@ function renderShelf() {
                     renderShelf();
                 });
 
-                // Create and display progess bar
+                // Create and display progess bar for physical books
                 const percentage = document.createElement("p");
                 const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
                 percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
@@ -219,6 +225,11 @@ function renderShelf() {
                     const audioProgress = document.createElement("progress");
                     audioProgress.max = book.audioLength;
                     audioProgress.value = position;
+                    
+                    const audioPercent = Math.round(position / book.audioLength * 100);
+                    const audioPercentage = document.createElement("p");
+                    audioPercentage.textContent = audioPercent + "% " + formatTime(position) + " of " + formatTime(book.audioLength);
+                    item.appendChild(audioPercentage);
                     item.appendChild(audioProgress);
                 }
             }
