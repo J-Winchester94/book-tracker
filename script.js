@@ -43,7 +43,17 @@ function renderResults(books) {
         item.appendChild(year);
 
         const addButton = document.createElement("button");
-        addButton.textContent = "Add to shelf";
+        const alreadyOnShelf = shelf.some(function (saved){
+            return saved.key === book.key;
+        });
+
+        if (alreadyOnShelf){
+            addButton.textContent = "On shelf";
+            addButton.disabled = true;
+        } else {
+            addButton.textContent = "Add to shelf";
+        }
+        
         addButton.addEventListener("click", function () {
             const shelfBook = {
                 key: book.key,
@@ -57,6 +67,10 @@ function renderResults(books) {
             shelf.push(shelfBook);
             saveShelf();
             renderShelf();
+
+            addButton.textContent = "On shelf";
+            addButton.disabled = true;
+
             console.log(shelf);
         });
 
