@@ -8,6 +8,7 @@ function saveShelf() {
     localStorage.setItem("shelf", JSON.stringify(shelf));
 }
 
+// Displays search results using the OpenLibrary API 
 function renderResults(books) {
     searchResults.innerHTML = "";
     books.forEach(function (book) {
@@ -60,6 +61,7 @@ function renderResults(books) {
 
 }
 
+// Displays saved books on the bookshelf
 function renderShelf() {
     shelfList.innerHTML = "";
 
@@ -105,6 +107,33 @@ function renderShelf() {
         });
         item.appendChild(statusSelect);
 
+        if(book.status === "Reading" && book.pages){
+            const pageInput = document.createElement("input");
+            pageInput.type = "number";
+            pageInput.min = 0;
+            pageInput.max = book.pages;
+            pageInput.value = book.currentPage || 0;
+
+            pageInput.addEventListener("change", function (){
+                shelf[index].currentPage = Number(pageInput.value);
+                saveShelf();
+                renderShelf();
+            });
+
+            const percentage = document.createElement("p");
+            const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
+            percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
+            item.appendChild(pageInput);
+            item.appendChild(percentage);
+
+            const progress = document.createElement("progress");
+            progress.max = book.pages;
+            progress.value = book.currentPage || 0;
+
+            item.appendChild(progress);
+        }
+
+        
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         deleteButton.className = "delete-button";
