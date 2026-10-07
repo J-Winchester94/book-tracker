@@ -53,10 +53,9 @@ function renderResults(books) {
             renderShelf();
             console.log(shelf);
         });
+
         item.appendChild(addButton);
-
         searchResults.appendChild(item);
-
     });
 
 }
@@ -90,9 +89,9 @@ function renderShelf() {
             item.appendChild(pages);
         }
 
+        // Create status select dropdown box
         const statusSelect = document.createElement("select");
         const statuses = ["Want to Read", "Reading", "Finished"];
-
         statuses.forEach(function (status) {
             const option = document.createElement("option");
             option.textContent = status;
@@ -107,33 +106,58 @@ function renderShelf() {
         });
         item.appendChild(statusSelect);
 
-        if(book.status === "Reading" && book.pages){
-            const pageInput = document.createElement("input");
-            pageInput.type = "number";
-            pageInput.min = 0;
-            pageInput.max = book.pages;
-            pageInput.value = book.currentPage || 0;
 
-            pageInput.addEventListener("change", function (){
-                shelf[index].currentPage = Number(pageInput.value);
+        // Display progess
+        if (book.status === "Reading") {
+            const formatSelect = document.createElement("select");
+            const formats = ["Pages", "Audio"];
+
+            formats.forEach(function (formatName) {
+                const formatOption = document.createElement("option");
+                formatOption.textContent = formatName;
+                formatSelect.appendChild(formatOption);
+            });
+
+            formatSelect.value = book.format || "Pages";
+            formatSelect.addEventListener("change", function () {
+                shelf[index].format = formatSelect.value;
                 saveShelf();
                 renderShelf();
             });
+            item.appendChild(formatSelect);
 
-            const percentage = document.createElement("p");
-            const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
-            percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
-            item.appendChild(pageInput);
-            item.appendChild(percentage);
+            if (book.format !== "Audio" && book.pages) {
+                const pageInput = document.createElement("input");
+                pageInput.type = "number";
+                pageInput.min = 0;
+                pageInput.max = book.pages;
+                pageInput.value = book.currentPage || 0;
 
-            const progress = document.createElement("progress");
-            progress.max = book.pages;
-            progress.value = book.currentPage || 0;
+                pageInput.addEventListener("change", function () {
+                    shelf[index].currentPage = Number(pageInput.value);
+                    saveShelf();
+                    renderShelf();
+                });
 
-            item.appendChild(progress);
+                // Create and display progess bar
+                const percentage = document.createElement("p");
+                const calculation = Math.round((book.currentPage || 0) / book.pages * 100);
+                percentage.textContent = calculation + "% · page " + pageInput.value + " of " + pageInput.max;
+                item.appendChild(pageInput);
+                item.appendChild(percentage);
+
+                const progress = document.createElement("progress");
+                progress.max = book.pages;
+                progress.value = book.currentPage || 0;
+                item.appendChild(progress);
+
+            // Audiobook information and progress
+            } else if (book.format === "Audio") {
+                
+            }
         }
 
-        
+        // Create delete button
         const deleteButton = document.createElement("button");
         deleteButton.textContent = "Delete";
         deleteButton.className = "delete-button";
