@@ -5,24 +5,17 @@
     --border-color: #657962;
 }
 
+/* Base */
 body {
     background-color: var(--bg-color);
     color: var(--text-color);
     font-family: sans-serif;
     padding: 20px;
 }
-
-.card {
-    background-color: var(--card-color);
-    padding: 15px;
-    border-radius: 15px;
-    border: 1px solid;
-    border-color: var(--border-color);
-}
-
-.card img{
-    width: 100px;
-    border-radius: 7px;
+/* Layout */
+h1, h2, #searchForm {
+    max-width: 600px;
+    margin: 0 auto;
 }
 
 #searchResults, #shelf {
@@ -35,6 +28,52 @@ body {
     gap: 12px;
 }
 
+#searchForm{
+    display: flex;
+    gap: 8px;
+}
+
+h2{
+    margin-top: 30px;
+}
+
+
+/* Cards */
+.card {
+    background-color: var(--card-color);
+    padding: 15px;
+    border-radius: 15px;
+    border: 1px solid;
+    border-color: var(--border-color);
+    display: flow-root;
+}
+
+progress { 
+    accent-color: var(--border-color);
+    width: 100%;
+}
+
+input[type="number"] { width: 70px; }
+
+.card img{
+    width: 100px;
+    border-radius: 7px;
+    float: left;
+    margin-right: 15px;
+}
+
+/* Buttons */
+.delete-button {
+    background-color: transparent;
+    color: #a4483a;
+    border: 1px solid #a4483a;
+}
+
+button.delete-button:hover:not(:disabled) {
+    background-color: #a4483a;
+    color: var(--bg-color);
+}
+
 button {
     padding: 15px;
     background-color: var(--border-color);
@@ -44,6 +83,11 @@ button {
     cursor: pointer;
 }
 
-button:hover {
+button:disabled {
+    opacity: 50%;
+    cursor: not-allowed;
+}
+
+button:hover:not(:disabled) {
     background-color: #3d5a45;
 }
