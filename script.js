@@ -77,7 +77,6 @@ function renderResults(books) {
         item.appendChild(addButton);
         searchResults.appendChild(item);
     });
-
 }
 
 // Displays saved books on the bookshelf
